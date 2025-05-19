@@ -46,12 +46,7 @@ A modern REST API service for managing and serving AI prompts. This service prov
      ```
    - Edit `.env` to configure your database and other settings.
 
-5. **Run database migrations:**
-   ```bash
-   alembic upgrade head
-   ```
-
-6. **Start the application:**
+5. **Start the application:**
    ```bash
    uvicorn app.main:app --reload
    ```
@@ -83,7 +78,6 @@ Once the server is running, you can access the interactive API documentation at:
 
 ```
 exemplar-prompt-hub/
-├── alembic/              # Database migrations
 ├── app/
 │   ├── api/             # API endpoints
 │   ├── core/            # Core functionality
