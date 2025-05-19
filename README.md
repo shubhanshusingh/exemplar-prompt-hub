@@ -9,6 +9,22 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.24.0-red)](https://streamlit.io/)
 [![Docker](https://img.shields.io/badge/docker-ready-blue)](docker-compose.yml)
 
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [Getting Started](#️-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Quick Start with Docker](#quick-start-with-docker)
+  - [Manual Installation](#manual-installation)
+- [Running Tests](#running-tests)
+- [Contributing](#contributing)
+- [License](#license)
+- [API Documentation](#-api-documentation)
+- [API Usage Examples](#-api-usage-examples)
+- [Project Structure](#-project-structure)
+- [Database Table Structure](#-database-table-structure)
+- [Updating Prompts with Versioning](#-updating-prompts-with-versioning)
+
 A modern REST API service for managing and serving AI prompts. This service provides a centralized repository for storing, versioning, and retrieving prompts for various AI applications. It uses PostgreSQL as the database for robust and scalable data management.
 
 ## ✨ Features
