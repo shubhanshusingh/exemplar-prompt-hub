@@ -63,7 +63,7 @@ pytest --cov=app --cov-report=term-missing
 ```
 
 ### Contributing
-Contributions are welcome! Please feel free to submit a Pull Request. For detailed contribution guidelines, please refer to the [CONTRIBUTION.md](CONTRIBUTION.md) file.
+Contributions are welcome! Please feel free to submit a Pull Request. For detailed contribution guidelines, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ### License
 This project is licensed under the MIT License - see the LICENSE file for details.
