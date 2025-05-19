@@ -5,6 +5,7 @@ from app.db.session import get_db
 from app.schemas.prompt import Prompt, PromptCreate, PromptUpdate, Tag
 from app.db.models import Prompt as PromptModel, Tag as TagModel
 from sqlalchemy import or_
+from app.scripts.seed_prompts_api import seed_prompts_api  # Import the seed function
 
 router = APIRouter()
 
@@ -111,4 +112,9 @@ def delete_prompt(prompt_id: int, db: Session = Depends(get_db)):
     
     db.delete(db_prompt)
     db.commit()
-    return {"message": "Prompt deleted successfully"} 
+    return {"message": "Prompt deleted successfully"}
+
+@router.post("/seed")
+def seed_database():
+    seed_prompts_api()  # Call the seed function
+    return {"message": "Database seeded successfully"} 
