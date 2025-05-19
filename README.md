@@ -117,6 +117,121 @@ Once the server is running, you can access the interactive API documentation at:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
+## 🔄 API Usage Examples
+
+Here are some example curl commands to interact with the API:
+
+### Create a Prompt
+```bash
+curl -X POST "http://localhost:8000/api/v1/prompts/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "example-prompt",
+    "text": "This is an example prompt text",
+    "description": "A sample prompt for demonstration",
+    "version": 1,
+    "meta": {
+      "author": "test-user",
+      "category": "example"
+    },
+    "tags": ["example", "test"]
+  }'
+```
+
+### Get All Prompts
+```bash
+# Get all prompts
+curl "http://localhost:8000/api/v1/prompts/"
+
+# Get prompts with search
+curl "http://localhost:8000/api/v1/prompts/?search=example"
+
+# Get prompts with tag filter
+curl "http://localhost:8000/api/v1/prompts/?tag=test"
+
+# Get prompts with pagination
+curl "http://localhost:8000/api/v1/prompts/?skip=0&limit=10"
+```
+
+### Get a Specific Prompt
+```bash
+# Replace {prompt_id} with actual ID
+curl "http://localhost:8000/api/v1/prompts/1"
+```
+
+### Update a Prompt
+```bash
+# Replace {prompt_id} with actual ID
+curl -X PUT "http://localhost:8000/api/v1/prompts/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "updated-example-prompt",
+    "text": "This is the updated prompt text",
+    "description": "Updated description",
+    "version": 2,
+    "meta": {
+      "author": "test-user",
+      "category": "example",
+      "updated": true
+    },
+    "tags": ["example", "test", "updated"]
+  }'
+```
+
+### Delete a Prompt
+```bash
+# Replace {prompt_id} with actual ID
+curl -X DELETE "http://localhost:8000/api/v1/prompts/1"
+```
+
+### Complete Flow Example
+Here's a complete flow example using a single prompt:
+
+```bash
+# 1. Create a new prompt
+CREATE_RESPONSE=$(curl -s -X POST "http://localhost:8000/api/v1/prompts/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "flow-example",
+    "text": "Initial prompt text",
+    "description": "Example for complete flow",
+    "version": 1,
+    "meta": {"author": "test-user"},
+    "tags": ["flow", "example"]
+  }')
+
+# Extract prompt ID from response
+PROMPT_ID=$(echo $CREATE_RESPONSE | jq -r '.id')
+
+# 2. Get the created prompt
+curl "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
+
+# 3. Update the prompt
+curl -X PUT "http://localhost:8000/api/v1/prompts/$PROMPT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Updated prompt text",
+    "description": "Updated description",
+    "version": 2,
+    "meta": {"author": "test-user", "updated": true},
+    "tags": ["flow", "example", "updated"]
+  }'
+
+# 4. Get the updated prompt
+curl "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
+
+# 5. Delete the prompt
+curl -X DELETE "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
+
+# 6. Verify deletion
+curl "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
+```
+
+Note: The complete flow example requires `jq` to be installed for JSON parsing. You can install it using:
+- Ubuntu/Debian: `sudo apt-get install jq`
+- macOS: `brew install jq`
+- Windows: Download from https://stedolan.github.io/jq/download/
+
 ## 📁 Project Structure
 
 ```
