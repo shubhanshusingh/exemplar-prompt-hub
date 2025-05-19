@@ -172,3 +172,17 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ignore Python cache and virtual environment
+__pycache__/
+venv/
+
+# Ignore SQLite database files
+*.db
+
+# Ignore environment variable files, but allow .env.example
+.env
+!.env.example
+
+# Ignore other system files
+.DS_Store
