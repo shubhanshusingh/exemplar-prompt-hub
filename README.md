@@ -7,6 +7,7 @@
 [![Test Coverage](https://img.shields.io/badge/test%20coverage-100%25-brightgreen)](tests/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13%2B-blue)](https://www.postgresql.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.24.0-red)](https://streamlit.io/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue)](docker-compose.yml)
 
 A modern REST API service for managing and serving AI prompts. This service provides a centralized repository for storing, versioning, and retrieving prompts for various AI applications. It uses PostgreSQL as the database for robust and scalable data management.
 
@@ -29,8 +30,40 @@ For a detailed checklist of implemented and planned features, see [FEATURES.md](
 - pip (Python package manager)
 - Git
 - PostgreSQL (for database)
+- Docker and Docker Compose (for containerized setup)
 
-### Installation
+### Quick Start with Docker
+
+The easiest way to get started is using Docker Compose:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/exemplar-prompt-hub.git
+   cd exemplar-prompt-hub
+   ```
+
+2. **Start the services:**
+   ```bash
+   docker-compose up -d
+   ```
+
+   This will start:
+   - FastAPI backend at http://localhost:8000
+   - PostgreSQL database at localhost:5432
+   - Streamlit UI at http://localhost:8501
+
+3. **Access the services:**
+   - API Documentation: http://localhost:8000/docs
+   - Streamlit UI: http://localhost:8501
+
+4. **Stop the services:**
+   ```bash
+   docker-compose down
+   ```
+
+### Manual Installation
+
+If you prefer to run the services manually:
 
 1. **Clone the repository:**
    ```bash
