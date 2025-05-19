@@ -4,6 +4,8 @@ A modern REST API service for managing and serving AI prompts. This service prov
 
 ## ✨ Features
 
+For a detailed checklist of implemented and planned features, see [FEATURES.md](FEATURES.md).
+
 - **RESTful API** for prompt management
 - **Version control** for prompts
 - **Tag-based prompt organization**
