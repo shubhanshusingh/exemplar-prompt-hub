@@ -89,6 +89,15 @@ def update_prompt(prompt_id: int, prompt: PromptUpdate, db: Session = Depends(ge
     if db_prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
     
+    # Check for duplicate name if name is being updated
+    if prompt.name is not None and prompt.name != db_prompt.name:
+        existing_prompt = db.query(PromptModel).filter(PromptModel.name == prompt.name).first()
+        if existing_prompt:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A prompt with this name already exists"
+            )
+    
     # Handle version
     if prompt.version is not None:
         try:

@@ -50,6 +50,7 @@ class PromptCreate(PromptBase):
 
 
 class PromptUpdate(BaseModel):
+    name: Optional[str] = None
     text: Optional[str] = None
     description: Optional[str] = None
     version: Optional[int] = None
