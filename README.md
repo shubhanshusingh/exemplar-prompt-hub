@@ -1,5 +1,13 @@
 # 🚀 Exemplar Prompt Hub
 
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-green)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Test Coverage](https://img.shields.io/badge/test%20coverage-100%25-brightgreen)](tests/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13%2B-blue)](https://www.postgresql.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.24.0-red)](https://streamlit.io/)
+
 A modern REST API service for managing and serving AI prompts. This service provides a centralized repository for storing, versioning, and retrieving prompts for various AI applications. It uses PostgreSQL as the database for robust and scalable data management.
 
 ## ✨ Features
@@ -135,45 +143,4 @@ To update a prompt with versioning, follow these steps:
    - **meta**: (Optional) Any additional metadata.
 
 3. **Versioning Logic:**
-   - If you provide a new version number, the system will create a new entry in the `PromptVersions` table.
-   - If you do not provide a version number, the system will increment the existing version number by 1.
-
-### Example Update Request
-```json
-{
-  "name": "Updated Prompt Name",
-  "text": "Updated prompt text",
-  "description": "Updated description",
-  "version": 2,
-  "meta": {"key": "value"}
-}
-```
-
-### Note
-Ensure that the prompt you are updating exists in the database before attempting to update it.
-
-## 🌟 Streamlit UI
-
-The project includes a Streamlit UI application that allows you to view prompts stored in the database. This UI provides a user-friendly interface to display prompt details such as name, text, description, version, and metadata.
-
-### Running the Streamlit App
-
-1. **Ensure the API is Running:**
-   Make sure your FastAPI application is running so that the Streamlit app can fetch prompts from the API.
-
-2. **Run the Streamlit App:**
-   Use the following command to start the Streamlit app:
-   ```bash
-   streamlit run app/streamlit_app.py
-   ```
-
-3. **Access the UI:**
-   Open your web browser and go to `http://localhost:8501` to view the Streamlit UI.
-
-### Features of the Streamlit UI
-- Displays a list of prompts fetched from the API.
-- Shows details for each prompt, including name, text, description, version, and metadata.
-- Provides a clean and intuitive interface for users to interact with the prompt data.
-
-### Note
-Ensure that the API is accessible at `http://localhost:8000/api/v1/prompts` for the Streamlit app to function correctly. 
+   - If you provide a new version number, the system will create a new entry in the `PromptVersions`

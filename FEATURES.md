@@ -1,5 +1,10 @@
 # Exemplar Prompt Hub Features Checklist
 
+[![Feature Status](https://img.shields.io/badge/features-80%25%20complete-brightgreen)](FEATURES.md)
+[![Core Features](https://img.shields.io/badge/core%20features-5/6%20complete-yellow)](FEATURES.md#core-features)
+[![Additional Features](https://img.shields.io/badge/additional%20features-4/4%20complete-brightgreen)](FEATURES.md#additional-features)
+[![Future Enhancements](https://img.shields.io/badge/future%20enhancements-0/8%20complete-red)](FEATURES.md#future-enhancements)
+
 ## Core Features
 
 - [x] RESTful API for prompt management
