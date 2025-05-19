@@ -52,7 +52,7 @@ def test_prompt_data():
         "name": "test-prompt",
         "text": "This is a test prompt",
         "description": "A prompt for testing",
-        "version": "1.0.0",
+        "version": 1,
         "meta": {"author": "test-user"},
         "tags": ["test", "example"]
     }

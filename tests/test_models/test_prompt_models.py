@@ -9,7 +9,7 @@ def test_create_prompt(db_session):
         name="test-prompt",
         text="Test prompt text",
         description="Test description",
-        version="1.0.0",
+        version="1",
         meta={"author": "test-user"}
     )
     db_session.add(prompt)
@@ -20,7 +20,7 @@ def test_create_prompt(db_session):
     assert prompt.name == "test-prompt"
     assert prompt.text == "Test prompt text"
     assert prompt.description == "Test description"
-    assert prompt.version == "1.0.0"
+    assert prompt.version == "1"
     assert prompt.meta == {"author": "test-user"}
     assert isinstance(prompt.created_at, datetime)
     assert prompt.updated_at is None
@@ -37,7 +37,7 @@ def test_create_prompt_with_tags(db_session):
     prompt = Prompt(
         name="test-prompt",
         text="Test prompt text",
-        version="1.0.0"
+        version="1"
     )
     prompt.tags.extend([tag1, tag2])
     db_session.add(prompt)
@@ -53,7 +53,7 @@ def test_create_prompt_version(db_session):
     prompt = Prompt(
         name="test-prompt",
         text="Test prompt text",
-        version="1.0.0"
+        version="1"
     )
     db_session.add(prompt)
     db_session.commit()
@@ -61,7 +61,7 @@ def test_create_prompt_version(db_session):
     # Create version
     version = PromptVersion(
         prompt_id=prompt.id,
-        version="1.0.1",
+        version="2",
         text="Updated prompt text",
         meta={"changes": "Updated text"}
     )
@@ -71,7 +71,7 @@ def test_create_prompt_version(db_session):
 
     assert version.id is not None
     assert version.prompt_id == prompt.id
-    assert version.version == "1.0.1"
+    assert version.version == "2"
     assert version.text == "Updated prompt text"
     assert version.meta == {"changes": "Updated text"}
     assert isinstance(version.created_at, datetime)
@@ -82,7 +82,7 @@ def test_prompt_relationships(db_session):
     prompt = Prompt(
         name="test-prompt",
         text="Test prompt text",
-        version="1.0.0"
+        version="1"
     )
     db_session.add(prompt)
     db_session.commit()
@@ -90,12 +90,12 @@ def test_prompt_relationships(db_session):
     # Create versions
     version1 = PromptVersion(
         prompt_id=prompt.id,
-        version="1.0.1",
+        version="2",
         text="Updated text 1"
     )
     version2 = PromptVersion(
         prompt_id=prompt.id,
-        version="1.0.2",
+        version="3",
         text="Updated text 2"
     )
     db_session.add_all([version1, version2])
@@ -103,7 +103,7 @@ def test_prompt_relationships(db_session):
     db_session.refresh(prompt)
 
     assert len(prompt.versions) == 2
-    assert {v.version for v in prompt.versions} == {"1.0.1", "1.0.2"}
+    assert {v.version for v in prompt.versions} == {"2", "3"}
 
 
 def test_unique_prompt_name(db_session):
@@ -111,7 +111,7 @@ def test_unique_prompt_name(db_session):
     prompt1 = Prompt(
         name="test-prompt",
         text="Test prompt text",
-        version="1.0.0"
+        version="1"
     )
     db_session.add(prompt1)
     db_session.commit()
@@ -120,7 +120,7 @@ def test_unique_prompt_name(db_session):
     prompt2 = Prompt(
         name="test-prompt",
         text="Another prompt text",
-        version="1.0.0"
+        version="1"
     )
     db_session.add(prompt2)
     

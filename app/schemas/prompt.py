@@ -19,7 +19,7 @@ class Tag(TagBase):
 
 
 class PromptVersionBase(BaseModel):
-    version: str
+    version: int
     text: str
     meta: Optional[Dict[str, Any]] = None
 
@@ -41,7 +41,7 @@ class PromptBase(BaseModel):
     name: str
     text: str
     description: Optional[str] = None
-    version: str
+    version: int
     meta: Optional[Dict[str, Any]] = None
 
 
@@ -52,7 +52,7 @@ class PromptCreate(PromptBase):
 class PromptUpdate(BaseModel):
     text: Optional[str] = None
     description: Optional[str] = None
-    version: Optional[str] = None
+    version: Optional[int] = None
     meta: Optional[Dict[str, Any]] = None
     tags: Optional[List[str]] = None
 

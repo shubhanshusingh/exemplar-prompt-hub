@@ -1,41 +1,56 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.prompt import Prompt, PromptCreate, PromptUpdate, Tag
-from app.db.models import Prompt as PromptModel, Tag as TagModel
-from sqlalchemy import or_
+from app.db.models import Prompt as PromptModel, Tag as TagModel, PromptVersion as PromptVersionModel
+from sqlalchemy import or_, text
 from app.scripts.seed_prompts_api import seed_prompts_api  # Import the seed function
+from app.core.config import settings
 
 router = APIRouter()
 
 
 @router.post("/", response_model=Prompt)
 def create_prompt(prompt: PromptCreate, db: Session = Depends(get_db)):
-    # Check if prompt with same name exists
-    db_prompt = db.query(PromptModel).filter(PromptModel.name == prompt.name).first()
-    if db_prompt:
-        raise HTTPException(status_code=400, detail="Prompt with this name already exists")
+    # Check for duplicate prompt name first
+    existing_prompt = db.query(PromptModel).filter(PromptModel.name == prompt.name).first()
+    if existing_prompt:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A prompt with this name already exists"
+        )
     
-    # Create new prompt
+    # Create new prompt with version 1
     db_prompt = PromptModel(
         name=prompt.name,
         text=prompt.text,
         description=prompt.description,
-        version=prompt.version,
+        version=1,  # Always start with version 1 as integer
         meta=prompt.meta
     )
     
-    # Add tags
+    # Handle tags
     if prompt.tags:
         for tag_name in prompt.tags:
-            db_tag = db.query(TagModel).filter(TagModel.name == tag_name).first()
-            if not db_tag:
-                db_tag = TagModel(name=tag_name)
-                db.add(db_tag)
-            db_prompt.tags.append(db_tag)
+            tag = db.query(TagModel).filter(TagModel.name == tag_name).first()
+            if not tag:
+                tag = TagModel(name=tag_name)
+                db.add(tag)
+            db_prompt.tags.append(tag)
     
     db.add(db_prompt)
+    db.flush()  # Ensure tag gets an id
+    
+    # Create initial version
+    version = PromptVersionModel(
+        prompt_id=db_prompt.id,
+        version=1,
+        text=prompt.text,
+        description=prompt.description,
+        meta=prompt.meta
+    )
+    db.add(version)
     db.commit()
     db.refresh(db_prompt)
     return db_prompt
@@ -52,13 +67,7 @@ def read_prompts(
     query = db.query(PromptModel)
     
     if search:
-        query = query.filter(
-            or_(
-                PromptModel.name.ilike(f"%{search}%"),
-                PromptModel.description.ilike(f"%{search}%"),
-                PromptModel.text.ilike(f"%{search}%")
-            )
-        )
+        query = query.filter(PromptModel.name.ilike(f"%{search}%"))
     
     if tag:
         query = query.join(PromptModel.tags).filter(TagModel.name == tag)
@@ -68,36 +77,56 @@ def read_prompts(
 
 @router.get("/{prompt_id}", response_model=Prompt)
 def read_prompt(prompt_id: int, db: Session = Depends(get_db)):
-    db_prompt = db.query(PromptModel).filter(PromptModel.id == prompt_id).first()
-    if db_prompt is None:
+    prompt = db.query(PromptModel).filter(PromptModel.id == prompt_id).first()
+    if prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
-    return db_prompt
+    return prompt
 
 
 @router.put("/{prompt_id}", response_model=Prompt)
-def update_prompt(
-    prompt_id: int,
-    prompt: PromptUpdate,
-    db: Session = Depends(get_db)
-):
+def update_prompt(prompt_id: int, prompt: PromptUpdate, db: Session = Depends(get_db)):
     db_prompt = db.query(PromptModel).filter(PromptModel.id == prompt_id).first()
     if db_prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
     
+    # Handle version
+    if prompt.version is not None:
+        try:
+            version = int(prompt.version)
+            if version <= 0:
+                version = 1
+        except (ValueError, TypeError):
+            version = db_prompt.version + 1
+    else:
+        version = db_prompt.version + 1
+    
     # Update prompt fields
-    for field, value in prompt.dict(exclude_unset=True).items():
-        if field != "tags":
+    for field, value in prompt.model_dump(exclude_unset=True).items():
+        if field != "version" and field != "tags":
             setattr(db_prompt, field, value)
     
-    # Update tags if provided
+    # Handle tags
     if prompt.tags is not None:
         db_prompt.tags = []
         for tag_name in prompt.tags:
-            db_tag = db.query(TagModel).filter(TagModel.name == tag_name).first()
-            if not db_tag:
-                db_tag = TagModel(name=tag_name)
-                db.add(db_tag)
-            db_prompt.tags.append(db_tag)
+            tag = db.query(TagModel).filter(TagModel.name == tag_name).first()
+            if not tag:
+                tag = TagModel(name=tag_name)
+                db.add(tag)
+            db_prompt.tags.append(tag)
+    
+    # Update version
+    db_prompt.version = version
+    
+    # Create new version record
+    version = PromptVersionModel(
+        prompt_id=db_prompt.id,
+        version=version,
+        text=db_prompt.text,
+        description=db_prompt.description,
+        meta=db_prompt.meta
+    )
+    db.add(version)
     
     db.commit()
     db.refresh(db_prompt)
@@ -106,11 +135,11 @@ def update_prompt(
 
 @router.delete("/{prompt_id}")
 def delete_prompt(prompt_id: int, db: Session = Depends(get_db)):
-    db_prompt = db.query(PromptModel).filter(PromptModel.id == prompt_id).first()
-    if db_prompt is None:
+    prompt = db.query(PromptModel).filter(PromptModel.id == prompt_id).first()
+    if prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
     
-    db.delete(db_prompt)
+    db.delete(prompt)
     db.commit()
     return {"message": "Prompt deleted successfully"}
 

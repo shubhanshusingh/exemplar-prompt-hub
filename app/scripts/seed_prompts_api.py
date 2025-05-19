@@ -7,7 +7,7 @@ def seed_prompts_api():
     prompt1 = {
         "name": "AI Prompt 1",
         "text": "This is a sample AI prompt.",
-        "version": "1.0",
+        "version": 1,
         "description": "A sample prompt for AI applications.",
         "meta": {},
         "tags": ["AI"]
@@ -15,7 +15,7 @@ def seed_prompts_api():
     prompt2 = {
         "name": "ML Prompt 1",
         "text": "This is a sample Machine Learning prompt.",
-        "version": "1.0",
+        "version": 1,
         "description": "A sample prompt for ML applications.",
         "meta": {},
         "tags": ["Machine Learning"]

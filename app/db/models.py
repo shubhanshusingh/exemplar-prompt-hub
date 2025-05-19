@@ -19,7 +19,7 @@ class Prompt(Base):
     name = Column(String, unique=True, index=True)
     text = Column(String)
     description = Column(String)
-    version = Column(String)
+    version = Column(Integer)
     meta = Column(JSON)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -44,8 +44,9 @@ class PromptVersion(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     prompt_id = Column(Integer, ForeignKey("prompts.id"))
-    version = Column(String)
+    version = Column(Integer)
     text = Column(String)
+    description = Column(String)
     meta = Column(JSON)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
