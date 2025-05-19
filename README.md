@@ -1,17 +1,17 @@
-# Exemplar Prompt Hub
+# 🚀 Exemplar Prompt Hub
 
 A modern REST API service for managing and serving AI prompts. This service provides a centralized repository for storing, versioning, and retrieving prompts for various AI applications. It uses PostgreSQL as the database for robust and scalable data management.
 
-## Features
+## ✨ Features
 
-- RESTful API for prompt management
-- Version control for prompts
-- Tag-based prompt organization
-- Metadata support for prompts
-- Authentication and authorization
-- Search and filtering capabilities
+- **RESTful API** for prompt management
+- **Version control** for prompts
+- **Tag-based prompt organization**
+- **Metadata support** for prompts
+- **Authentication and authorization**
+- **Search and filtering capabilities**
 
-## Getting Started
+## 🛠️ Getting Started
 
 ### Prerequisites
 
@@ -68,13 +68,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ### License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## API Documentation
+## 📚 API Documentation
 
 Once the server is running, you can access the interactive API documentation at:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 exemplar-prompt-hub/
@@ -91,28 +91,7 @@ exemplar-prompt-hub/
 └── README.md           # Project documentation
 ```
 
-## Seeding the Database via API
-
-To seed the database with initial data, you can use the following API endpoint:
-
-### Example: Seeding Prompts
-
-1. **Start the application:**
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-2. **Use the following curl command to seed prompts:**
-   ```bash
-   curl -X POST http://localhost:8000/api/v1/prompts/seed
-   ```
-
-This will populate the database with sample prompts. You can modify the seeding logic in the `scripts/seed_prompts.py` file to add more data as needed.
-
-### Note
-Ensure that your database is properly set up and that the application is running before attempting to seed the database.
-
-## Database Table Structure
+## 📊 Database Table Structure
 
 The application uses the following database tables:
 
@@ -138,7 +117,7 @@ The application uses the following database tables:
 - **meta**: JSON
 - **created_at**: DateTime
 
-## Updating Prompts with Versioning
+## 🔄 Updating Prompts with Versioning
 
 To update a prompt with versioning, follow these steps:
 
@@ -171,7 +150,7 @@ To update a prompt with versioning, follow these steps:
 ### Note
 Ensure that the prompt you are updating exists in the database before attempting to update it.
 
-## Streamlit UI
+## 🌟 Streamlit UI
 
 The project includes a Streamlit UI application that allows you to view prompts stored in the database. This UI provides a user-friendly interface to display prompt details such as name, text, description, version, and metadata.
 
