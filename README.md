@@ -169,4 +169,30 @@ To update a prompt with versioning, follow these steps:
 ```
 
 ### Note
-Ensure that the prompt you are updating exists in the database before attempting to update it. 
+Ensure that the prompt you are updating exists in the database before attempting to update it.
+
+## Streamlit UI
+
+The project includes a Streamlit UI application that allows you to view prompts stored in the database. This UI provides a user-friendly interface to display prompt details such as name, text, description, version, and metadata.
+
+### Running the Streamlit App
+
+1. **Ensure the API is Running:**
+   Make sure your FastAPI application is running so that the Streamlit app can fetch prompts from the API.
+
+2. **Run the Streamlit App:**
+   Use the following command to start the Streamlit app:
+   ```bash
+   streamlit run app/streamlit_app.py
+   ```
+
+3. **Access the UI:**
+   Open your web browser and go to `http://localhost:8501` to view the Streamlit UI.
+
+### Features of the Streamlit UI
+- Displays a list of prompts fetched from the API.
+- Shows details for each prompt, including name, text, description, version, and metadata.
+- Provides a clean and intuitive interface for users to interact with the prompt data.
+
+### Note
+Ensure that the API is accessible at `http://localhost:8000/api/v1/prompts` for the Streamlit app to function correctly. 
