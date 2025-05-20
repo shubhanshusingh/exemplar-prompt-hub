@@ -5,8 +5,8 @@ from app.db.session import get_db
 from app.schemas.prompt import Prompt, PromptCreate, PromptUpdate, Tag
 from app.db.models import Prompt as PromptModel, Tag as TagModel, PromptVersion as PromptVersionModel
 from sqlalchemy import or_, text
-from app.scripts.seed_prompts_api import seed_prompts_api  # Import the seed function
 from app.core.config import settings
+from app.scripts.seed_prompts_api import seed_prompts_api
 
 router = APIRouter()
 
@@ -152,7 +152,17 @@ def delete_prompt(prompt_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Prompt deleted successfully"}
 
-@router.post("/seed")
+@router.post("/seed", status_code=status.HTTP_201_CREATED)
 def seed_database():
-    seed_prompts_api()  # Call the seed function
-    return {"message": "Database seeded successfully"} 
+    """
+    Seed the database with initial prompt data.
+    This endpoint is used to populate the database with sample prompts.
+    """
+    try:
+        seed_prompts_api()
+        return {"message": "Database seeded successfully"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to seed database: {str(e)}"
+        ) 

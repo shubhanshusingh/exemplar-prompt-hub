@@ -1,19 +1,45 @@
 from setuptools import setup, find_packages
 
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
+with open("requirements.txt", "r", encoding="utf-8") as fh:
+    requirements = fh.read().splitlines()
+
 setup(
     name="exemplar-prompt-hub",
-    version="0.1.0",
+    version="0.1.2",
+    author="Your Name",
+    author_email="your.email@example.com",
+    description="A modern REST API service for managing and serving AI prompts",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/shubhanshusingh/exemplar-prompt-hub",
     packages=find_packages(),
-    install_requires=[
-        "fastapi==0.104.1",
-        "uvicorn==0.24.0",
-        "sqlalchemy==2.0.23",
-        "pydantic==2.5.2",
-        "python-multipart==0.0.6",
-        "python-jose[cryptography]==3.3.0",
-        "passlib[bcrypt]==1.7.4",
-        "alembic==1.12.1",
-        "python-dotenv==1.0.0",
+    license="MIT",
+    license_files=("LICENSE"),
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     python_requires=">=3.8",
+    install_requires=requirements,
+    entry_points={
+        "console_scripts": [
+            "prompt-hub=app.main:main",
+            "prompt-hub-ui=app.streamlit_app:main",
+        ],
+    },
+    include_package_data=True,
+    package_data={
+        "app": ["templates/*", "static/*"],
+    },
 ) 

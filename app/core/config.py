@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     # CORS
     BACKEND_CORS_ORIGINS: list = ["*"]
     
+    # Server
+    HOST: str = "0.0.0.0"
+    PORT: int = 8000
+    DEBUG: bool = False
+    
     class Config:
         case_sensitive = True
         env_file = ".env"

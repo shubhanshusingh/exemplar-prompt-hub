@@ -14,6 +14,7 @@
 - [Features](#-features)
 - [Getting Started](#️-getting-started)
   - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
   - [Quick Start with Docker](#quick-start-with-docker)
   - [Manual Installation](#manual-installation)
 - [Running Tests](#running-tests)
@@ -48,7 +49,32 @@ For a detailed checklist of implemented and planned features, see [FEATURES.md](
 - PostgreSQL (for database)
 - Docker and Docker Compose (for containerized setup)
 
-### Quick Start with Docker
+### Installation
+
+#### Using pip
+
+You can install the package directly from PyPI:
+
+```bash
+pip install exemplar-prompt-hub
+```
+
+Or install from the source:
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/exemplar-prompt-hub.git
+cd exemplar-prompt-hub
+
+# Install the package
+pip install -e .
+```
+
+After installation, you can use the following commands:
+- `prompt-hub` - Start the FastAPI server
+- `prompt-hub-ui` - Start the Streamlit UI
+
+#### Using Docker
 
 The easiest way to get started is using Docker Compose:
 

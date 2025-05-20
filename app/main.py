@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.api.endpoints import prompts
 from app.db.base_class import Base
 from app.db.session import engine
+import uvicorn
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -37,4 +38,16 @@ def read_root():
         "version": settings.VERSION,
         "docs_url": "/docs",
         "redoc_url": "/redoc"
-    } 
+    }
+
+def main():
+    """Run the FastAPI application using uvicorn."""
+    uvicorn.run(
+        "app.main:app",
+        host=settings.HOST,
+        port=settings.PORT,
+        reload=settings.DEBUG
+    )
+
+if __name__ == "__main__":
+    main() 
