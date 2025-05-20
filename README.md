@@ -370,6 +370,8 @@ curl -X POST "http://localhost:8000/api/v1/prompts/" \
 }
 ```
 
+See [examples/jinja_sample.py](examples/jinja_sample.py) for a complete Python implementation of how to use this template with Jinja2.
+
 ### 2. Create a Template with Control Structures
 
 ```bash
