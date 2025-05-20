@@ -327,3 +327,135 @@ curl -X PUT "http://localhost:8000/api/v1/prompts/{prompt_id}" \
 ```
 
 The API will automatically handle versioning and maintain the history of changes.
+
+## 🎨 Using Prompts with Jinja Templating
+
+The API supports Jinja2 templating in prompts, allowing you to create dynamic prompts with variables. Here's how to use it:
+
+### 1. Create a Template Prompt
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/prompts/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "greeting-template",
+    "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}.",
+    "description": "A greeting template with dynamic variables",
+    "meta": {
+      "template_variables": ["name", "platform", "role"],
+      "author": "test-user"
+    },
+    "tags": ["template", "greeting"]
+  }'
+```
+
+### 2. Use the Template in Python
+
+```python
+import requests
+import jinja2
+from jinja2 import Template
+
+# Fetch the prompt template
+response = requests.get("http://localhost:8000/api/v1/prompts/{prompt_id}")
+prompt_data = response.json()
+
+# Create a Jinja template
+template = Template(prompt_data["text"])
+
+# Render with variables
+rendered_prompt = template.render(
+    name="John",
+    platform="Exemplar Prompt Hub",
+    role="Developer"
+)
+
+print(rendered_prompt)
+# Output: Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer.
+```
+
+### 3. Advanced Template Features
+
+You can use all Jinja2 features in your prompts:
+
+```bash
+# Create a prompt with Jinja2 control structures
+curl -X POST "http://localhost:8000/api/v1/prompts/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "advanced-template",
+    "text": "{% if user_type == \"admin\" %}Welcome, Administrator!{% else %}Welcome, User!{% endif %}\n\n{% for item in features %}- {{ item }}\n{% endfor %}",
+    "description": "Advanced template with control structures",
+    "meta": {
+      "template_variables": ["user_type", "features"],
+      "author": "test-user"
+    },
+    "tags": ["template", "advanced"]
+  }'
+```
+
+### 4. Template with Filters
+
+```python
+# Fetch and render a template with filters
+response = requests.get("http://localhost:8000/api/v1/prompts/{prompt_id}")
+prompt_data = response.json()
+
+template = Template(prompt_data["text"])
+rendered_prompt = template.render(
+    user_type="admin",
+    features=["Version Control", "Templating", "API Access"]
+)
+
+print(rendered_prompt)
+# Output:
+# Welcome, Administrator!
+#
+# - Version Control
+# - Templating
+# - API Access
+```
+
+### 5. Template with Macros
+
+```bash
+# Create a prompt with Jinja2 macros
+curl -X POST "http://localhost:8000/api/v1/prompts/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "macro-template",
+    "text": "{% macro format_item(item) %}- {{ item|title }}\n{% endmacro %}\n\n{% for category in categories %}{{ category.name }}:\n{% for item in category.items %}{{ format_item(item) }}{% endfor %}\n{% endfor %}",
+    "description": "Template using Jinja2 macros",
+    "meta": {
+      "template_variables": ["categories"],
+      "author": "test-user"
+    },
+    "tags": ["template", "macro"]
+  }'
+```
+
+### Best Practices
+
+1. **Document Variables**: Always document template variables in the prompt's meta field
+2. **Default Values**: Consider providing default values in the template
+3. **Error Handling**: Use Jinja2's error handling features
+4. **Security**: Be careful with user input in templates
+5. **Versioning**: Use the API's versioning feature to track template changes
+
+### Example with Error Handling
+
+```python
+from jinja2 import Template, TemplateError
+
+try:
+    template = Template(prompt_data["text"])
+    rendered_prompt = template.render(
+        name="John",
+        platform="Exemplar Prompt Hub"
+        # role is missing, will use default if defined
+    )
+except TemplateError as e:
+    print(f"Template error: {e}")
+```
+
+This templating system allows you to create dynamic, reusable prompts while maintaining version control and easy management through the API.
