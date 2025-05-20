@@ -336,6 +336,7 @@ The API supports Jinja2 templating in prompts, allowing you to create dynamic pr
 ### 1. Create a Template Prompt
 
 ```bash
+# Create a basic greeting template
 curl -X POST "http://localhost:8000/api/v1/prompts/" \
   -H "Content-Type: application/json" \
   -d '{
@@ -348,39 +349,31 @@ curl -X POST "http://localhost:8000/api/v1/prompts/" \
     },
     "tags": ["template", "greeting"]
   }'
+
+# Response:
+{
+  "id": 1,
+  "name": "greeting-template",
+  "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}.",
+  "description": "A greeting template with dynamic variables",
+  "version": 1,
+  "meta": {
+    "template_variables": ["name", "platform", "role"],
+    "author": "test-user"
+  },
+  "tags": [
+    {"id": 1, "name": "template"},
+    {"id": 2, "name": "greeting"}
+  ],
+  "created_at": "2024-03-20T10:00:00",
+  "updated_at": null
+}
 ```
 
-### 2. Use the Template in Python
-
-```python
-import requests
-import jinja2
-from jinja2 import Template
-
-# Fetch the prompt template
-response = requests.get("http://localhost:8000/api/v1/prompts/{prompt_id}")
-prompt_data = response.json()
-
-# Create a Jinja template
-template = Template(prompt_data["text"])
-
-# Render with variables
-rendered_prompt = template.render(
-    name="John",
-    platform="Exemplar Prompt Hub",
-    role="Developer"
-)
-
-print(rendered_prompt)
-# Output: Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer.
-```
-
-### 3. Advanced Template Features
-
-You can use all Jinja2 features in your prompts:
+### 2. Create a Template with Control Structures
 
 ```bash
-# Create a prompt with Jinja2 control structures
+# Create a template with if-else and loops
 curl -X POST "http://localhost:8000/api/v1/prompts/" \
   -H "Content-Type: application/json" \
   -d '{
@@ -393,34 +386,31 @@ curl -X POST "http://localhost:8000/api/v1/prompts/" \
     },
     "tags": ["template", "advanced"]
   }'
+
+# Response:
+{
+  "id": 2,
+  "name": "advanced-template",
+  "text": "{% if user_type == \"admin\" %}Welcome, Administrator!{% else %}Welcome, User!{% endif %}\n\n{% for item in features %}- {{ item }}\n{% endfor %}",
+  "description": "Advanced template with control structures",
+  "version": 1,
+  "meta": {
+    "template_variables": ["user_type", "features"],
+    "author": "test-user"
+  },
+  "tags": [
+    {"id": 1, "name": "template"},
+    {"id": 3, "name": "advanced"}
+  ],
+  "created_at": "2024-03-20T10:05:00",
+  "updated_at": null
+}
 ```
 
-### 4. Template with Filters
-
-```python
-# Fetch and render a template with filters
-response = requests.get("http://localhost:8000/api/v1/prompts/{prompt_id}")
-prompt_data = response.json()
-
-template = Template(prompt_data["text"])
-rendered_prompt = template.render(
-    user_type="admin",
-    features=["Version Control", "Templating", "API Access"]
-)
-
-print(rendered_prompt)
-# Output:
-# Welcome, Administrator!
-#
-# - Version Control
-# - Templating
-# - API Access
-```
-
-### 5. Template with Macros
+### 3. Create a Template with Macros
 
 ```bash
-# Create a prompt with Jinja2 macros
+# Create a template with Jinja2 macros
 curl -X POST "http://localhost:8000/api/v1/prompts/" \
   -H "Content-Type: application/json" \
   -d '{
@@ -433,6 +423,180 @@ curl -X POST "http://localhost:8000/api/v1/prompts/" \
     },
     "tags": ["template", "macro"]
   }'
+
+# Response:
+{
+  "id": 3,
+  "name": "macro-template",
+  "text": "{% macro format_item(item) %}- {{ item|title }}\n{% endmacro %}\n\n{% for category in categories %}{{ category.name }}:\n{% for item in category.items %}{{ format_item(item) }}{% endfor %}\n{% endfor %}",
+  "description": "Template using Jinja2 macros",
+  "version": 1,
+  "meta": {
+    "template_variables": ["categories"],
+    "author": "test-user"
+  },
+  "tags": [
+    {"id": 1, "name": "template"},
+    {"id": 4, "name": "macro"}
+  ],
+  "created_at": "2024-03-20T10:10:00",
+  "updated_at": null
+}
+```
+
+### 4. Fetch and Use Templates
+
+```bash
+# Fetch a template by ID
+curl "http://localhost:8000/api/v1/prompts/1"
+
+# Response:
+{
+  "id": 1,
+  "name": "greeting-template",
+  "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}.",
+  "description": "A greeting template with dynamic variables",
+  "version": 1,
+  "meta": {
+    "template_variables": ["name", "platform", "role"],
+    "author": "test-user"
+  },
+  "tags": [
+    {"id": 1, "name": "template"},
+    {"id": 2, "name": "greeting"}
+  ],
+  "created_at": "2024-03-20T10:00:00",
+  "updated_at": null
+}
+
+# Fetch a template by name
+curl "http://localhost:8000/api/v1/prompts/?search=greeting-template"
+
+# Response:
+[
+  {
+    "id": 1,
+    "name": "greeting-template",
+    "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}.",
+    "description": "A greeting template with dynamic variables",
+    "version": 1,
+    "meta": {
+      "template_variables": ["name", "platform", "role"],
+      "author": "test-user"
+    },
+    "tags": [
+      {"id": 1, "name": "template"},
+      {"id": 2, "name": "greeting"}
+    ],
+    "created_at": "2024-03-20T10:00:00",
+    "updated_at": null
+  }
+]
+```
+
+### 5. Update a Template
+
+```bash
+# Update a template with new variables
+curl -X PUT "http://localhost:8000/api/v1/prompts/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}. Your department is {{ department }}.",
+    "description": "Updated greeting template with department",
+    "meta": {
+      "template_variables": ["name", "platform", "role", "department"],
+      "author": "test-user",
+      "updated": true
+    },
+    "tags": ["template", "greeting", "updated"]
+  }'
+
+# Response:
+{
+  "id": 1,
+  "name": "greeting-template",
+  "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}. Your department is {{ department }}.",
+  "description": "Updated greeting template with department",
+  "version": 2,
+  "meta": {
+    "template_variables": ["name", "platform", "role", "department"],
+    "author": "test-user",
+    "updated": true
+  },
+  "tags": [
+    {"id": 1, "name": "template"},
+    {"id": 2, "name": "greeting"},
+    {"id": 5, "name": "updated"}
+  ],
+  "created_at": "2024-03-20T10:00:00",
+  "updated_at": "2024-03-20T10:15:00"
+}
+```
+
+### 6. Delete a Template
+
+```bash
+# Delete a template
+curl -X DELETE "http://localhost:8000/api/v1/prompts/1"
+
+# Response: 204 No Content
+```
+
+### 7. Using Templates in Python
+
+```python
+import requests
+import jinja2
+from jinja2 import Template
+
+# Fetch the prompt template
+response = requests.get("http://localhost:8000/api/v1/prompts/1")
+prompt_data = response.json()
+
+# Create a Jinja template
+template = Template(prompt_data["text"])
+
+# Render with variables
+rendered_prompt = template.render(
+    name="John",
+    platform="Exemplar Prompt Hub",
+    role="Developer",
+    department="Engineering"
+)
+
+print(rendered_prompt)
+# Output: Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer. Your department is Engineering.
+```
+
+### 8. Using Templates in JavaScript
+
+```javascript
+// Fetch and render a template
+async function renderPrompt(promptId, variables) {
+    const response = await fetch(`http://localhost:8000/api/v1/prompts/${promptId}`);
+    const promptData = await response.json();
+    
+    // Create template function
+    const template = new Function('variables', `
+        with(variables) {
+            return \`${promptData.text}\`;
+        }
+    `);
+    
+    // Render with variables
+    return template(variables);
+}
+
+// Usage
+const renderedPrompt = await renderPrompt(1, {
+    name: 'John',
+    platform: 'Exemplar Prompt Hub',
+    role: 'Developer',
+    department: 'Engineering'
+});
+
+console.log(renderedPrompt);
+// Output: Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer. Your department is Engineering.
 ```
 
 ### Best Practices
