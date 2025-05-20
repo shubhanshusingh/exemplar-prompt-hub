@@ -6,16 +6,19 @@ with open("README.md", "r", encoding="utf-8") as fh:
 with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = fh.read().splitlines()
 
+with open("VERSION", "r", encoding="utf-8") as fh:
+    version = fh.read().strip()
+
 setup(
     name="exemplar-prompt-hub",
-    version="0.1.2",
+    version=version,
     author="Your Name",
     author_email="your.email@example.com",
     description="A modern REST API service for managing and serving AI prompts",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/shubhanshusingh/exemplar-prompt-hub",
-    packages=find_packages(),
+    packages=find_packages() + ['scripts'],
     license="MIT",
     license_files=("LICENSE"),
     classifiers=[
@@ -36,6 +39,10 @@ setup(
         "console_scripts": [
             "prompt-hub=app.main:main",
             "prompt-hub-ui=app.streamlit_app:main",
+            "prompt-hub-env=scripts.post_install:copy_env_file",
+        ],
+        'post_install': [
+            'copy_env=scripts.post_install:copy_env_file',
         ],
     },
     include_package_data=True,
