@@ -1,0 +1,22 @@
+-r requirements.txt
+
+# Build dependencies
+build==1.0.3
+twine==4.0.2
+wheel==0.41.3
+
+# Development tools
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0
+mypy==1.7.1
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+httpx==0.25.1
+
+# Documentation
+mkdocs==1.5.3
+mkdocs-material==9.4.6 
