@@ -41,7 +41,7 @@ class PromptBase(BaseModel):
     name: str
     text: str
     description: Optional[str] = None
-    version: int
+    version: Optional[int] = None
     meta: Optional[Dict[str, Any]] = None
 
 

@@ -186,7 +186,6 @@ curl -X POST "http://localhost:8000/api/v1/prompts/" \
     "name": "example-prompt",
     "text": "This is an example prompt text",
     "description": "A sample prompt for demonstration",
-    "version": 1,
     "meta": {
       "author": "test-user",
       "category": "example"
@@ -194,6 +193,8 @@ curl -X POST "http://localhost:8000/api/v1/prompts/" \
     "tags": ["example", "test"]
   }'
 ```
+
+Note: The `version` field is optional and handled automatically by the API. New prompts start with version 1, and subsequent updates will increment the version number automatically.
 
 ### Get All Prompts
 ```bash
