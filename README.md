@@ -6,8 +6,11 @@
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Test Coverage](https://img.shields.io/badge/test%20coverage-100%25-brightgreen)](tests/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13%2B-blue)](https://www.postgresql.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.24.0-red)](https://streamlit.io/)
 [![Docker](https://img.shields.io/badge/docker-ready-blue)](docker-compose.yml)
+
+A modern REST API service for managing and serving AI prompts. This service provides a centralized repository for storing, versioning, and retrieving prompts for various AI applications. It uses PostgreSQL as the database for robust and scalable data management.
+
+---
 
 ## 📑 Table of Contents
 
@@ -25,8 +28,6 @@
 - [Project Structure](#-project-structure)
 - [Database Table Structure](#-database-table-structure)
 - [Updating Prompts with Versioning](#-updating-prompts-with-versioning)
-
-A modern REST API service for managing and serving AI prompts. This service provides a centralized repository for storing, versioning, and retrieving prompts for various AI applications. It uses PostgreSQL as the database for robust and scalable data management.
 
 ## ✨ Features
 
@@ -46,7 +47,7 @@ For a detailed checklist of implemented and planned features, see [FEATURES.md](
 - Python 3.8 or higher
 - pip (Python package manager)
 - Git
-- PostgreSQL (for database)
+- PostgreSQL (for database) (by default it uses sqlite as per .env.example)
 - Docker and Docker Compose (for containerized setup)
 
 ### Installation
@@ -55,8 +56,16 @@ For a detailed checklist of implemented and planned features, see [FEATURES.md](
 
 You can install the package directly from PyPI:
 
+### 🐍 Python (pip, Virtual Environment)
+
 ```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install exemplar-prompt-hub
+# Create a .env file and copy content from .env.example as per the github repo
+cp .env.example .env
+# Edit .env as needed
+prompt-hub
 ```
 
 Or install from the source:
@@ -66,13 +75,21 @@ Or install from the source:
 git clone https://github.com/yourusername/exemplar-prompt-hub.git
 cd exemplar-prompt-hub
 
+# Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+
 # Install the package
 pip install -e .
+
+# Copy .env.example to .env [copy .env.example from github repo branch]
+cp .env.example .env
+
+# Edit .env to configure your database and other settings
 ```
 
-After installation, you can use the following commands:
+After installation, you can use the following command:
 - `prompt-hub` - Start the FastAPI server
-- `prompt-hub-ui` - Start the Streamlit UI
 
 #### Using Docker
 
@@ -92,11 +109,9 @@ The easiest way to get started is using Docker Compose:
    This will start:
    - FastAPI backend at http://localhost:8000
    - PostgreSQL database at localhost:5432
-   - Streamlit UI at http://localhost:8501
 
 3. **Access the services:**
    - API Documentation: http://localhost:8000/docs
-   - Streamlit UI: http://localhost:8501
 
 4. **Stop the services:**
    ```bash
@@ -198,139 +213,117 @@ curl "http://localhost:8000/api/v1/prompts/?skip=0&limit=10"
 ### Get a Specific Prompt
 ```bash
 # Replace {prompt_id} with actual ID
-curl "http://localhost:8000/api/v1/prompts/1"
+curl "http://localhost:8000/api/v1/prompts/{prompt_id}"
 ```
 
 ### Update a Prompt
 ```bash
-# Replace {prompt_id} with actual ID
-curl -X PUT "http://localhost:8000/api/v1/prompts/1" \
+curl -X PUT "http://localhost:8000/api/v1/prompts/{prompt_id}" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "updated-example-prompt",
-    "text": "This is the updated prompt text",
+    "text": "Updated prompt text",
     "description": "Updated description",
-    "version": 2,
     "meta": {
       "author": "test-user",
-      "category": "example",
-      "updated": true
+      "category": "updated"
     },
-    "tags": ["example", "test", "updated"]
+    "tags": ["updated", "test"]
   }'
 ```
 
 ### Delete a Prompt
 ```bash
-# Replace {prompt_id} with actual ID
-curl -X DELETE "http://localhost:8000/api/v1/prompts/1"
+curl -X DELETE "http://localhost:8000/api/v1/prompts/{prompt_id}"
 ```
-
-### Complete Flow Example
-Here's a complete flow example using a single prompt:
-
-```bash
-# 1. Create a new prompt
-CREATE_RESPONSE=$(curl -s -X POST "http://localhost:8000/api/v1/prompts/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "flow-example",
-    "text": "Initial prompt text",
-    "description": "Example for complete flow",
-    "version": 1,
-    "meta": {"author": "test-user"},
-    "tags": ["flow", "example"]
-  }')
-
-# Extract prompt ID from response
-PROMPT_ID=$(echo $CREATE_RESPONSE | jq -r '.id')
-
-# 2. Get the created prompt
-curl "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
-
-# 3. Update the prompt
-curl -X PUT "http://localhost:8000/api/v1/prompts/$PROMPT_ID" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Updated prompt text",
-    "description": "Updated description",
-    "version": 2,
-    "meta": {"author": "test-user", "updated": true},
-    "tags": ["flow", "example", "updated"]
-  }'
-
-# 4. Get the updated prompt
-curl "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
-
-# 5. Delete the prompt
-curl -X DELETE "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
-
-# 6. Verify deletion
-curl "http://localhost:8000/api/v1/prompts/$PROMPT_ID"
-```
-
-Note: The complete flow example requires `jq` to be installed for JSON parsing. You can install it using:
-- Ubuntu/Debian: `sudo apt-get install jq`
-- macOS: `brew install jq`
-- Windows: Download from https://stedolan.github.io/jq/download/
 
 ## 📁 Project Structure
 
 ```
 exemplar-prompt-hub/
 ├── app/
-│   ├── api/             # API endpoints
-│   ├── core/            # Core functionality
-│   ├── db/              # Database models and session
-│   ├── schemas/         # Pydantic models
-│   └── main.py          # Application entry point
-├── tests/               # Test files
-├── .env                 # Environment variables
-├── .env.example         # Example environment variables
-├── requirements.txt     # Project dependencies
-└── README.md           # Project documentation
+│   ├── api/
+│   │   └── endpoints/
+│   │       └── prompts.py
+│   ├── core/
+│   │   └── config.py
+│   ├── db/
+│   │   ├── base_class.py
+│   │   ├── models.py
+│   │   └── session.py
+│   ├── schemas/
+│   │   └── prompt.py
+│   └── main.py
+├── tests/
+│   └── test_prompts.py
+├── alembic/
+│   └── versions/
+├── .env.example
+├── .gitignore
+├── docker-compose.yml
+├── Dockerfile
+├── LICENSE
+├── MANIFEST.in
+├── pyproject.toml
+├── README.md
+├── requirements.txt
+└── setup.py
 ```
 
 ## 📊 Database Table Structure
 
-The application uses the following database tables:
-
 ### Prompts Table
-- **id**: Integer (Primary Key)
-- **name**: String (Unique)
-- **text**: String
-- **description**: String
-- **version**: Integer
-- **meta**: JSON
-- **created_at**: DateTime
-- **updated_at**: DateTime
+```sql
+CREATE TABLE prompts (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    text TEXT NOT NULL,
+    description TEXT,
+    version INTEGER NOT NULL,
+    meta JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE
+);
+```
 
 ### Tags Table
-- **id**: Integer (Primary Key)
-- **name**: String (Unique)
+```sql
+CREATE TABLE tags (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+```
 
-### PromptVersions Table
-- **id**: Integer (Primary Key)
-- **prompt_id**: Integer (Foreign Key to Prompts)
-- **version**: Integer
-- **text**: String
-- **meta**: JSON
-- **created_at**: DateTime
+### Prompt Tags Table (Many-to-Many Relationship)
+```sql
+CREATE TABLE prompt_tags (
+    prompt_id INTEGER REFERENCES prompts(id) ON DELETE CASCADE,
+    tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (prompt_id, tag_id)
+);
+```
 
 ## 🔄 Updating Prompts with Versioning
 
-To update a prompt with versioning, follow these steps:
+The API supports versioning of prompts. When updating a prompt:
 
-1. **Retrieve the Prompt:**
-   Use the `GET /api/v1/prompts/{prompt_id}` endpoint to retrieve the prompt you want to update.
+1. The current version is incremented
+2. A new record is created with the updated content
+3. The old version is preserved for reference
 
-2. **Update the Prompt:**
-   Use the `PUT /api/v1/prompts/{prompt_id}` endpoint to update the prompt. You can include the following fields:
-   - **name**: (Optional) The new name of the prompt.
-   - **text**: (Optional) The new text of the prompt.
-   - **description**: (Optional) The new description of the prompt.
-   - **version**: (Optional) The new version number.
-   - **meta**: (Optional) Any additional metadata.
+To update a prompt, use the PUT endpoint with the prompt ID:
 
-3. **Versioning Logic:**
-   - If you provide a new version number, the system will create a new entry in the `PromptVersions`
+```bash
+curl -X PUT "http://localhost:8000/api/v1/prompts/{prompt_id}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Updated prompt text",
+    "description": "Updated description",
+    "meta": {
+      "author": "test-user",
+      "category": "updated"
+    },
+    "tags": ["updated", "test"]
+  }'
+```
+
+The API will automatically handle versioning and maintain the history of changes.

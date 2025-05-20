@@ -18,7 +18,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/shubhanshusingh/exemplar-prompt-hub",
-    packages=find_packages() + ['scripts'],
+    packages=find_packages(),
     license="MIT",
     license_files=("LICENSE"),
     classifiers=[
@@ -38,15 +38,11 @@ setup(
     entry_points={
         "console_scripts": [
             "prompt-hub=app.main:main",
-            "prompt-hub-ui=app.streamlit_app:main",
-            "prompt-hub-env=scripts.post_install:copy_env_file",
-        ],
-        'post_install': [
-            'copy_env=scripts.post_install:copy_env_file',
         ],
     },
     include_package_data=True,
     package_data={
         "app": ["templates/*", "static/*"],
+        "": [".env.example"],
     },
 ) 
