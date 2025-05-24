@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # Security
     SECRET_KEY: str = "your-secret-key"  # Replace with a secure key
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
+    OPENAI_API_KEY: str
     
     # Database
     DATABASE_URL: str  # This should match the environment variable
