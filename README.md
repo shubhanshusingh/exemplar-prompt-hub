@@ -515,7 +515,7 @@ curl -X DELETE "http://localhost:8000/api/v1/prompts/1"
 
 ### 5. Using Templates in Python
 
-See the complete examples in the `examples/templating/python` directory:
+See the complete examples in the [`examples/templating/python`](/examples/templating/python/) directory:
 
 1. Basic string template: `examples/templating/python/string_template_example.py`
 2. F-strings: `examples/templating/python/f_strings_example.py`
@@ -559,7 +559,7 @@ For more advanced examples including control structures, macros, and different t
 
 ### 6. Using Templates in JavaScript
 
-See the complete examples in the `examples/templating/javascript` directory:
+See the complete examples in the [`examples/templating/javascript`](/examples/templating/javascript/) directory:
 
 1. Basic template literals: `examples/templating/javascript/template_literals.js`
 2. Handlebars.js: `examples/templating/javascript/handlebars_example.js`
