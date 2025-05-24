@@ -1,7 +1,32 @@
 /**
  * Example using Handlebars.js for prompt templating.
+ * This script creates a prompt, fetches it, and renders it with variables.
  */
 import Handlebars from 'handlebars';
+
+async function createTemplate() {
+    const templateData = {
+        name: "handlebars-example",
+        text: "Hello {{name}}! Welcome to {{platform}}. Your role is {{role}}. Your department is {{department}}.",
+        description: "A template using Handlebars.js.",
+        meta: {
+            template_variables: ["name", "platform", "role", "department"],
+            author: "test-user"
+        },
+        tags: ["template", "handlebars"]
+    };
+    const response = await fetch("http://localhost:8000/api/v1/prompts/", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(templateData)
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+}
 
 async function fetchPrompt(promptId) {
     const response = await fetch(`http://localhost:8000/api/v1/prompts/${promptId}`);
@@ -11,36 +36,32 @@ async function fetchPrompt(promptId) {
     return response.json();
 }
 
-async function renderPrompt(promptId, variables) {
+async function renderPrompt(template, variables) {
+    const compiled = Handlebars.compile(template);
+    return compiled(variables);
+}
+
+async function main() {
     try {
+        // Create the template
+        const createdPrompt = await createTemplate();
+        console.log('Created prompt:', JSON.stringify(createdPrompt, null, 2));
         // Fetch the prompt
-        const promptData = await fetchPrompt(promptId);
-        console.log('Fetched prompt:', JSON.stringify(promptData, null, 2));
-        
-        // Compile template
-        const template = Handlebars.compile(promptData.text);
-        
-        // Render with variables
-        const renderedPrompt = template(variables);
+        const promptData = await fetchPrompt(createdPrompt.id);
+        // Example variables
+        const variables = {
+            name: 'John',
+            platform: 'Exemplar Prompt Hub',
+            role: 'Developer',
+            department: 'Engineering'
+        };
+        // Render the prompt
+        const renderedPrompt = await renderPrompt(promptData.text, variables);
         console.log('\nRendered prompt:');
         console.log(renderedPrompt);
-        
-        return renderedPrompt;
     } catch (error) {
         console.error('Error:', error.message);
-        throw error;
     }
 }
 
-// Example usage
-const variables = {
-    name: 'John',
-    platform: 'Exemplar Prompt Hub',
-    role: 'Developer'
-};
-
-// Replace with actual prompt ID
-const promptId = 'example-prompt-id';
-
-renderPrompt(promptId, variables)
-    .catch(error => console.error('Failed to render prompt:', error)); 
+main().catch(console.error); 
