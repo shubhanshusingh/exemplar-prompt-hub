@@ -275,33 +275,75 @@ exemplar-prompt-hub/
 ### Prompts Table
 ```sql
 CREATE TABLE prompts (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
     text TEXT NOT NULL,
     description TEXT,
     version INTEGER NOT NULL,
-    meta JSONB,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE
+    meta TEXT,  -- Store JSON as TEXT in SQLite
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP
 );
 ```
 
 ### Tags Table
 ```sql
 CREATE TABLE tags (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
 );
 ```
 
 ### Prompt Tags Table (Many-to-Many Relationship)
 ```sql
 CREATE TABLE prompt_tags (
-    prompt_id INTEGER REFERENCES prompts(id) ON DELETE CASCADE,
-    tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
-    PRIMARY KEY (prompt_id, tag_id)
+    prompt_id INTEGER,
+    tag_id INTEGER,
+    PRIMARY KEY (prompt_id, tag_id),
+    FOREIGN KEY (prompt_id) REFERENCES prompts(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 );
 ```
+
+### Prompt Versions Table
+```sql
+CREATE TABLE prompt_versions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prompt_id INTEGER,
+    version INTEGER,
+    text TEXT,
+    description TEXT,
+    meta TEXT,  -- Store JSON as TEXT in SQLite
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (prompt_id) REFERENCES prompts(id) ON DELETE CASCADE
+);
+```
+
+### Indexes
+```sql
+CREATE INDEX idx_prompts_name ON prompts(name);
+CREATE INDEX idx_tags_name ON tags(name);
+CREATE INDEX idx_prompt_versions_prompt_id ON prompt_versions(prompt_id);
+CREATE INDEX idx_prompt_tags_prompt_id ON prompt_tags(prompt_id);
+CREATE INDEX idx_prompt_tags_tag_id ON prompt_tags(tag_id);
+```
+
+### Timestamp Trigger
+```sql
+CREATE TRIGGER update_prompt_timestamp 
+AFTER UPDATE ON prompts
+BEGIN
+    UPDATE prompts SET updated_at = CURRENT_TIMESTAMP
+    WHERE id = NEW.id;
+END;
+```
+
+Key differences from PostgreSQL:
+1. Uses `INTEGER PRIMARY KEY AUTOINCREMENT` instead of `SERIAL`
+2. Uses `TEXT` instead of `VARCHAR` and `JSONB`
+3. Stores JSON as `TEXT` with manual serialization
+4. Requires explicit foreign key support with `PRAGMA foreign_keys = ON`
+5. Uses triggers for `updated_at` timestamp management
 
 ## 🔄 Updating Prompts with Versioning
 
