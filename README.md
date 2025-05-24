@@ -414,81 +414,8 @@ curl -X POST "http://localhost:8000/api/v1/prompts/" \
 
 See [examples/jinja_open_ai.py](examples/jinja_open_ai.py) for a complete Python implementation of how to use this template with Jinja2.
 
-### 2. Create a Template with Control Structures
 
-```bash
-# Create a template with if-else and loops
-curl -X POST "http://localhost:8000/api/v1/prompts/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "advanced-template",
-    "text": "{% if user_type == \"admin\" %}Welcome, Administrator!{% else %}Welcome, User!{% endif %}\n\n{% for item in features %}- {{ item }}\n{% endfor %}",
-    "description": "Advanced template with control structures",
-    "meta": {
-      "template_variables": ["user_type", "features"],
-      "author": "test-user"
-    },
-    "tags": ["template", "advanced"]
-  }'
-
-# Response:
-{
-  "id": 2,
-  "name": "advanced-template",
-  "text": "{% if user_type == \"admin\" %}Welcome, Administrator!{% else %}Welcome, User!{% endif %}\n\n{% for item in features %}- {{ item }}\n{% endfor %}",
-  "description": "Advanced template with control structures",
-  "version": 1,
-  "meta": {
-    "template_variables": ["user_type", "features"],
-    "author": "test-user"
-  },
-  "tags": [
-    {"id": 1, "name": "template"},
-    {"id": 3, "name": "advanced"}
-  ],
-  "created_at": "2024-03-20T10:05:00",
-  "updated_at": null
-}
-```
-
-### 3. Create a Template with Macros
-
-```bash
-# Create a template with Jinja2 macros
-curl -X POST "http://localhost:8000/api/v1/prompts/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "macro-template",
-    "text": "{% macro format_item(item) %}- {{ item|title }}\n{% endmacro %}\n\n{% for category in categories %}{{ category.name }}:\n{% for item in category.items %}{{ format_item(item) }}{% endfor %}\n{% endfor %}",
-    "description": "Template using Jinja2 macros",
-    "meta": {
-      "template_variables": ["categories"],
-      "author": "test-user"
-    },
-    "tags": ["template", "macro"]
-  }'
-
-# Response:
-{
-  "id": 3,
-  "name": "macro-template",
-  "text": "{% macro format_item(item) %}- {{ item|title }}\n{% endmacro %}\n\n{% for category in categories %}{{ category.name }}:\n{% for item in category.items %}{{ format_item(item) }}{% endfor %}\n{% endfor %}",
-  "description": "Template using Jinja2 macros",
-  "version": 1,
-  "meta": {
-    "template_variables": ["categories"],
-    "author": "test-user"
-  },
-  "tags": [
-    {"id": 1, "name": "template"},
-    {"id": 4, "name": "macro"}
-  ],
-  "created_at": "2024-03-20T10:10:00",
-  "updated_at": null
-}
-```
-
-### 4. Fetch and Use Templates
+### 2. Fetch and Use Templates
 
 ```bash
 # Fetch a template by ID
@@ -538,7 +465,7 @@ curl "http://localhost:8000/api/v1/prompts/?search=greeting-template"
 ]
 ```
 
-### 5. Update a Template
+### 3. Update a Template
 
 ```bash
 # Update a template with new variables
@@ -577,7 +504,7 @@ curl -X PUT "http://localhost:8000/api/v1/prompts/1" \
 }
 ```
 
-### 6. Delete a Template
+### 4. Delete a Template
 
 ```bash
 # Delete a template
@@ -586,7 +513,17 @@ curl -X DELETE "http://localhost:8000/api/v1/prompts/1"
 # Response: 204 No Content
 ```
 
-### 7. Using Templates in Python
+### 5. Using Templates in Python
+
+See the complete examples in the `examples/templating/python` directory:
+
+1. Basic string template: `examples/templating/python/string_template_example.py`
+2. F-strings: `examples/templating/python/f_strings_example.py`
+3. Mako template engine: `examples/templating/python/mako_example.py`
+4. Control structures: `examples/templating/python/control_structures_example.py`
+5. Jinja2 macros: `examples/templating/python/macro_example.py`
+
+Here's a simple example using Jinja2:
 
 ```python
 import requests
@@ -612,7 +549,26 @@ print(rendered_prompt)
 # Output: Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer. Your department is Engineering.
 ```
 
-### 8. Using Templates in JavaScript
+For more advanced examples including control structures, macros, and different template engines, refer to the example files mentioned above. Each example demonstrates different approaches to template rendering:
+
+- `string_template_example.py`: Uses Python's built-in string.Template for simple variable substitution
+- `f_strings_example.py`: Shows how to use Python's f-strings for template rendering
+- `mako_example.py`: Demonstrates the Mako template engine for high-performance templating
+- `control_structures_example.py`: Shows how to use if-else statements and loops in templates
+- `macro_example.py`: Demonstrates reusable template components using Jinja2 macros
+
+### 6. Using Templates in JavaScript
+
+See the complete examples in the `examples/templating/javascript` directory:
+
+1. Basic template literals: `examples/templating/javascript/template_literals.js`
+2. Handlebars.js: `examples/templating/javascript/handlebars_example.js`
+3. Mustache.js: `examples/templating/javascript/mustache_example.js`
+4. React component: `examples/templating/javascript/react_example.jsx`
+5. Control structures: `examples/templating/javascript/control_structures_example.js`
+6. Macros/Partials: `examples/templating/javascript/macro_example.js`
+
+Here's a simple example using template literals:
 
 ```javascript
 // Fetch and render a template
@@ -642,6 +598,8 @@ const renderedPrompt = await renderPrompt(1, {
 console.log(renderedPrompt);
 // Output: Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer. Your department is Engineering.
 ```
+
+For more advanced examples including control structures, macros, and React integration, refer to the example files mentioned above.
 
 ### Best Practices
 
