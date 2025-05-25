@@ -695,6 +695,95 @@ For more advanced examples including control structures, macros, and React integ
 4. **Security**: Be careful with user input in templates
 5. **Versioning**: Use the API's versioning feature to track template changes
 
+### Prompt Playground API
+
+The Prompt Playground API allows you to compare responses from different LLM models using the same prompt. It leverages the [OpenRouter API](https://openrouter.ai/docs/quickstart) to access multiple models through a single endpoint.
+
+#### Usage
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/prompts/playground" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt_id": 1,
+    "models": ["openai/gpt-4", "anthropic/claude-3-opus"],
+    "variables": {
+      "name": "John",
+      "platform": "Exemplar Prompt Hub",
+      "role": "Developer"
+    }
+  }'
+```
+
+#### Response Format
+
+```json
+{
+  "prompt_id": 1,
+  "prompt_name": "greeting-template",
+  "prompt_version": 1,
+  "variables_used": {
+    "name": "John",
+    "platform": "Exemplar Prompt Hub",
+    "role": "Developer"
+  },
+  "responses": {
+    "openai/gpt-4": {
+      "response": "Hello John! Welcome to Exemplar Prompt Hub...",
+      "model": "openai/gpt-4",
+      "prompt_used": "Hello {{ name }}! Welcome to {{ platform }}...",
+      "metadata": {
+        "prompt_id": 1,
+        "prompt_version": 1,
+        "variables_used": {...},
+        "usage": {
+          "prompt_tokens": 123,
+          "completion_tokens": 456,
+          "total_tokens": 579
+        },
+        "model_info": {
+          "id": "openai/gpt-4",
+          "name": "GPT-4"
+        }
+      }
+    }
+  }
+}
+```
+
+#### Features
+
+1. **Multiple Model Support**: Compare responses from different LLM models simultaneously
+2. **Template Variables**: Support for Jinja2-style template variables
+3. **Detailed Metadata**: Includes token usage, model information, and prompt versioning
+4. **Error Handling**: Graceful error handling for each model independently
+5. **OpenRouter Integration**: Uses OpenRouter API for accessing multiple models through a single endpoint
+
+#### Configuration
+
+Add the following to your `.env` file:
+```
+OPENROUTER_API_KEY=your_api_key_here
+PROJECT_URL=http://your-app-url.com  # Optional: for OpenRouter rankings
+```
+
+#### Supported Models
+
+The playground supports all models available through OpenRouter, including:
+- OpenAI models (GPT-4, GPT-3.5)
+- Anthropic models (Claude 3 Opus, Claude 3 Sonnet)
+- And many more...
+
+For a complete list of available models, visit the [OpenRouter Models page](https://openrouter.ai/models).
+
+#### Best Practices for Playground Usage
+
+1. **Model Selection**: Choose models that best fit your use case
+2. **Variable Validation**: Validate template variables before sending to models
+3. **Error Handling**: Handle model-specific errors appropriately
+4. **Token Usage**: Monitor token usage for cost optimization
+5. **Response Comparison**: Compare responses to identify model strengths and weaknesses
+
 ### Example with Error Handling
 
 ```python
