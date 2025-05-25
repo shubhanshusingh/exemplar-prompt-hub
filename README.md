@@ -237,6 +237,74 @@ curl -X PUT "http://localhost:8000/api/v1/prompts/{prompt_id}" \
 curl -X DELETE "http://localhost:8000/api/v1/prompts/{prompt_id}"
 ```
 
+### 2. Fetch and Use Templates
+
+```bash
+# Fetch a template by ID
+curl "http://localhost:8000/api/v1/prompts/1"
+
+# Response:
+{
+  "id": 1,
+  "name": "greeting-template",
+  "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}.",
+  "description": "A greeting template with dynamic variables",
+  "version": 1,
+  "meta": {
+    "template_variables": ["name", "platform", "role"],
+    "author": "test-user"
+  },
+  "tags": [
+    {"id": 1, "name": "template"},
+    {"id": 2, "name": "greeting"}
+  ],
+  "created_at": "2024-03-20T10:00:00",
+  "updated_at": null
+}
+
+# Fetch a specific version of a prompt
+curl "http://localhost:8000/api/v1/prompts/1/versions/2"
+
+# Response:
+{
+  "id": 2,
+  "prompt_id": 1,
+  "version": 2,
+  "text": "Updated greeting template text",
+  "description": "Updated description",
+  "meta": {
+    "template_variables": ["name", "platform", "role"],
+    "author": "test-user",
+    "updated": true
+  },
+  "created_at": "2024-03-20T11:00:00"
+}
+
+# Fetch a template by name
+curl "http://localhost:8000/api/v1/prompts/?search=greeting-template"
+
+# Response:
+[
+  {
+    "id": 1,
+    "name": "greeting-template",
+    "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}.",
+    "description": "A greeting template with dynamic variables",
+    "version": 1,
+    "meta": {
+      "template_variables": ["name", "platform", "role"],
+      "author": "test-user"
+    },
+    "tags": [
+      {"id": 1, "name": "template"},
+      {"id": 2, "name": "greeting"}
+    ],
+    "created_at": "2024-03-20T10:00:00",
+    "updated_at": null
+  }
+]
+```
+
 ## 📁 Project Structure
 
 ```
@@ -438,6 +506,24 @@ curl "http://localhost:8000/api/v1/prompts/1"
   ],
   "created_at": "2024-03-20T10:00:00",
   "updated_at": null
+}
+
+# Fetch a specific version of a prompt
+curl "http://localhost:8000/api/v1/prompts/1/versions/2"
+
+# Response:
+{
+  "id": 2,
+  "prompt_id": 1,
+  "version": 2,
+  "text": "Updated greeting template text",
+  "description": "Updated description",
+  "meta": {
+    "template_variables": ["name", "platform", "role"],
+    "author": "test-user",
+    "updated": true
+  },
+  "created_at": "2024-03-20T11:00:00"
 }
 
 # Fetch a template by name
