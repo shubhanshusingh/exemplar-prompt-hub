@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.schemas.prompt import Prompt, PromptCreate, PromptUpdate, Tag
+from app.schemas.prompt import Prompt, PromptCreate, PromptUpdate, Tag, PromptVersion
 from app.db.models import Prompt as PromptModel, Tag as TagModel, PromptVersion as PromptVersionModel
 from sqlalchemy import or_, text
 from app.core.config import settings
@@ -165,4 +165,28 @@ def seed_database():
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to seed database: {str(e)}"
-        ) 
+        )
+
+@router.get("/{prompt_id}/versions/{version_number}", response_model=PromptVersion)
+def read_prompt_version(prompt_id: int, version_number: int, db: Session = Depends(get_db)):
+    """
+    Fetch a specific version of a prompt.
+    """
+    # First check if prompt exists
+    prompt = db.query(PromptModel).filter(PromptModel.id == prompt_id).first()
+    if prompt is None:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+    
+    # Get the specific version
+    version = db.query(PromptVersionModel).filter(
+        PromptVersionModel.prompt_id == prompt_id,
+        PromptVersionModel.version == version_number
+    ).first()
+    
+    if version is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Version {version_number} not found for prompt {prompt_id}"
+        )
+    
+    return version 
