@@ -66,4 +66,18 @@ class Prompt(PromptBase):
     versions: List[PromptVersion] = []
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+
+class PlaygroundRequest(BaseModel):
+    prompt_id: int
+    models: List[str] = ["openai/gpt-4", "anthropic/claude-3-opus"]
+    variables: Optional[Dict[str, Any]] = None
+
+
+class PlaygroundResponse(BaseModel):
+    prompt_id: int
+    prompt_name: str
+    prompt_version: int
+    variables_used: Optional[Dict[str, Any]]
+    responses: Dict[str, Any] 

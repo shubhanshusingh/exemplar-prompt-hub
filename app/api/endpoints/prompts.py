@@ -1,12 +1,17 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.schemas.prompt import Prompt, PromptCreate, PromptUpdate, Tag, PromptVersion
+from app.schemas.prompt import (
+    Prompt, PromptCreate, PromptUpdate, Tag, PromptVersion,
+    PlaygroundRequest, PlaygroundResponse
+)
 from app.db.models import Prompt as PromptModel, Tag as TagModel, PromptVersion as PromptVersionModel
 from sqlalchemy import or_, text
 from app.core.config import settings
 from app.scripts.seed_prompts_api import seed_prompts_api
+import httpx
+import json
 
 router = APIRouter()
 
@@ -189,4 +194,87 @@ def read_prompt_version(prompt_id: int, version_number: int, db: Session = Depen
             detail=f"Version {version_number} not found for prompt {prompt_id}"
         )
     
-    return version 
+    return version
+
+@router.post("/playground", response_model=PlaygroundResponse)
+async def prompt_playground(
+    request: PlaygroundRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Compare responses from different LLM models for a given prompt.
+    
+    Args:
+        request: PlaygroundRequest containing prompt_id, models, and variables
+        db: Database session
+    
+    Returns:
+        PlaygroundResponse containing responses from each model
+    """
+    # Get the prompt
+    prompt = db.query(PromptModel).filter(PromptModel.id == request.prompt_id).first()
+    if prompt is None:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+    
+    # Prepare the prompt text with variables if provided
+    prompt_text = prompt.text
+    if request.variables:
+        try:
+            # Simple variable substitution
+            for key, value in request.variables.items():
+                prompt_text = prompt_text.replace(f"{{{{ {key} }}}}", str(value))
+        except Exception as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Error processing variables: {str(e)}"
+            )
+    
+    # Get responses from each model
+    responses = {}
+    async with httpx.AsyncClient() as client:
+        for model in request.models:
+            try:
+                response = await client.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+                        "HTTP-Referer": settings.PROJECT_URL,  # Optional: for rankings
+                        "X-Title": settings.PROJECT_NAME,  # Optional: for rankings
+                    },
+                    json={
+                        "model": model,
+                        "messages": [
+                            {"role": "system", "content": "You are a helpful AI assistant."},
+                            {"role": "user", "content": prompt_text}
+                        ]
+                    }
+                )
+                response.raise_for_status()
+                result = response.json()
+                
+                responses[model] = {
+                    "response": result["choices"][0]["message"]["content"],
+                    "model": model,
+                    "prompt_used": prompt_text,
+                    "metadata": {
+                        "prompt_id": request.prompt_id,
+                        "prompt_version": prompt.version,
+                        "variables_used": request.variables,
+                        "usage": result.get("usage", {}),
+                        "model_info": result.get("model", {})
+                    }
+                }
+            except Exception as e:
+                responses[model] = {
+                    "error": str(e),
+                    "model": model,
+                    "prompt_used": prompt_text
+                }
+    
+    return PlaygroundResponse(
+        prompt_id=request.prompt_id,
+        prompt_name=prompt.name,
+        prompt_version=prompt.version,
+        variables_used=request.variables,
+        responses=responses
+    ) 
