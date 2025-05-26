@@ -701,11 +701,13 @@ The Prompt Playground API allows you to compare responses from different LLM mod
 
 #### Usage
 
+[Create a template as mentioned here](#1-create-a-template-prompt)
+
 ```bash
 curl -X POST "http://localhost:8000/api/v1/prompts/playground" \
   -H "Content-Type: application/json" \
   -d '{
-    "prompt_id": 1,
+    "prompt_id": 4,
     "models": ["openai/gpt-4", "anthropic/claude-3-opus"],
     "variables": {
       "name": "John",
@@ -719,7 +721,7 @@ curl -X POST "http://localhost:8000/api/v1/prompts/playground" \
 
 ```json
 {
-  "prompt_id": 1,
+  "prompt_id": 4,
   "prompt_name": "greeting-template",
   "prompt_version": 1,
   "variables_used": {
@@ -729,22 +731,49 @@ curl -X POST "http://localhost:8000/api/v1/prompts/playground" \
   },
   "responses": {
     "openai/gpt-4": {
-      "response": "Hello John! Welcome to Exemplar Prompt Hub...",
+      "response": "Hello John! How can I assist you in your developer role today? Are you looking for help with coding, debugging, or perhaps ideas for a new project?",
       "model": "openai/gpt-4",
-      "prompt_used": "Hello {{ name }}! Welcome to {{ platform }}...",
+      "prompt_used": "Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer.",
       "metadata": {
-        "prompt_id": 1,
+        "prompt_id": 4,
         "prompt_version": 1,
-        "variables_used": {...},
-        "usage": {
-          "prompt_tokens": 123,
-          "completion_tokens": 456,
-          "total_tokens": 579
+        "variables_used": {
+          "name": "John",
+          "platform": "Exemplar Prompt Hub",
+          "role": "Developer"
         },
-        "model_info": {
-          "id": "openai/gpt-4",
-          "name": "GPT-4"
-        }
+        "usage": {
+          "prompt_tokens": 34,
+          "completion_tokens": 32,
+          "total_tokens": 66,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "model_info": "openai/gpt-4"
+      }
+    },
+    "anthropic/claude-3-opus": {
+      "response": "Hello! It's great to be here at Exemplar Prompt Hub. As an AI assistant in the Developer role, I'm happy to help with any programming, coding, software development, or technical questions you may have. Feel free to ask me about languages like Python, Java, C++, web development, databases, algorithms, or anything else related to software engineering. I'll do my best to provide helpful explanations, code samples, debugging tips, or guidance. Let me know what development topics you'd like to explore!",
+      "model": "anthropic/claude-3-opus",
+      "prompt_used": "Hello John! Welcome to Exemplar Prompt Hub. Your role is Developer.",
+      "metadata": {
+        "prompt_id": 4,
+        "prompt_version": 1,
+        "variables_used": {
+          "name": "John",
+          "platform": "Exemplar Prompt Hub",
+          "role": "Developer"
+        },
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 113,
+          "total_tokens": 144
+        },
+        "model_info": "anthropic/claude-3-opus"
       }
     }
   }
