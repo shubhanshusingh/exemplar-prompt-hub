@@ -175,7 +175,7 @@ Once the server is running, you can access the interactive API documentation at:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## 🔄 API Usage Examples
+## 🔄 [API Usage Examples](./examples/greeting_example.py)
 
 Here are some example curl commands to interact with the API:
 
