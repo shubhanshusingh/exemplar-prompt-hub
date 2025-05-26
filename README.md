@@ -39,6 +39,7 @@ For a detailed checklist of implemented and planned features, see [FEATURES.md](
 - **Metadata support** for prompts
 - **Authentication and authorization**
 - **Search and filtering capabilities**
+- **Prompt Playground API via OpenRouter**
 
 ## 🛠️ Getting Started
 
