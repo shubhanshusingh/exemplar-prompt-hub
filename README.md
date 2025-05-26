@@ -705,10 +705,25 @@ The Prompt Playground API allows you to compare responses from different LLM mod
 [Create a template as mentioned here](#1-create-a-template-prompt)
 
 ```bash
+# Using latest version of the prompt
 curl -X POST "http://localhost:8000/api/v1/prompts/playground" \
   -H "Content-Type: application/json" \
   -d '{
     "prompt_id": 4,
+    "models": ["openai/gpt-4", "anthropic/claude-3-opus"],
+    "variables": {
+      "name": "John",
+      "platform": "Exemplar Prompt Hub",
+      "role": "Developer"
+    }
+  }'
+
+# Using a specific version of the prompt
+curl -X POST "http://localhost:8000/api/v1/prompts/playground" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt_id": 4,
+    "version": 2,
     "models": ["openai/gpt-4", "anthropic/claude-3-opus"],
     "variables": {
       "name": "John",

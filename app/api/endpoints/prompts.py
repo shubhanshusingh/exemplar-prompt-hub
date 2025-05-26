@@ -205,7 +205,7 @@ async def prompt_playground(
     Compare responses from different LLM models for a given prompt.
     
     Args:
-        request: PlaygroundRequest containing prompt_id, models, and variables
+        request: PlaygroundRequest containing prompt_id, models, variables, and optional version
         db: Database session
     
     Returns:
@@ -216,8 +216,24 @@ async def prompt_playground(
     if prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
     
+    # Get the prompt version if specified, otherwise use latest
+    prompt_version = prompt.version
+    if request.version is not None:
+        version = db.query(PromptVersionModel).filter(
+            PromptVersionModel.prompt_id == request.prompt_id,
+            PromptVersionModel.version == request.version
+        ).first()
+        if version is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Version {request.version} not found for prompt {request.prompt_id}"
+            )
+        prompt_text = version.text
+        prompt_version = version.version
+    else:
+        prompt_text = prompt.text
+    
     # Prepare the prompt text with variables if provided
-    prompt_text = prompt.text
     if request.variables:
         try:
             # Simple variable substitution
@@ -258,7 +274,7 @@ async def prompt_playground(
                     "prompt_used": prompt_text,
                     "metadata": {
                         "prompt_id": request.prompt_id,
-                        "prompt_version": prompt.version,
+                        "prompt_version": prompt_version,
                         "variables_used": request.variables,
                         "usage": result.get("usage", {}),
                         "model_info": result.get("model", {})
@@ -274,7 +290,7 @@ async def prompt_playground(
     return PlaygroundResponse(
         prompt_id=request.prompt_id,
         prompt_name=prompt.name,
-        prompt_version=prompt.version,
+        prompt_version=prompt_version,
         variables_used=request.variables,
         responses=responses
     ) 

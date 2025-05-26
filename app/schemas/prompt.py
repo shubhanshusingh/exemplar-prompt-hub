@@ -71,6 +71,7 @@ class Prompt(PromptBase):
 
 class PlaygroundRequest(BaseModel):
     prompt_id: int
+    version: Optional[int] = None
     models: List[str] = ["openai/gpt-4", "anthropic/claude-3-opus"]
     variables: Optional[Dict[str, Any]] = None
 
