@@ -223,13 +223,14 @@ curl "http://localhost:8000/api/v1/prompts/{prompt_id}"
 curl -X PUT "http://localhost:8000/api/v1/prompts/{prompt_id}" \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "Updated prompt text",
-    "description": "Updated description",
+    "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}. Your department is {{ department }}.",
+    "description": "Updated greeting template with department",
     "meta": {
+      "template_variables": ["name", "platform", "role", "department"],
       "author": "test-user",
-      "category": "updated"
+      "updated": true
     },
-    "tags": ["updated", "test"]
+    "tags": ["template", "greeting", "updated"]
   }'
 ```
 
@@ -428,13 +429,14 @@ To update a prompt, use the PUT endpoint with the prompt ID:
 curl -X PUT "http://localhost:8000/api/v1/prompts/{prompt_id}" \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "Updated prompt text",
-    "description": "Updated description",
+    "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}. Your department is {{ department }}.",
+    "description": "Updated greeting template with department",
     "meta": {
+      "template_variables": ["name", "platform", "role", "department"],
       "author": "test-user",
-      "category": "updated"
+      "updated": true
     },
-    "tags": ["updated", "test"]
+    "tags": ["template", "greeting", "updated"]
   }'
 ```
 
