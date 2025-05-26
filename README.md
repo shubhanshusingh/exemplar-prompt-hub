@@ -184,14 +184,14 @@ Here are some example curl commands to interact with the API:
 curl -X POST "http://localhost:8000/api/v1/prompts/" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "example-prompt",
-    "text": "This is an example prompt text",
-    "description": "A sample prompt for demonstration",
+    "name": "greeting-template",
+    "text": "Hello {{ name }}! Welcome to {{ platform }}. Your role is {{ role }}.",
+    "description": "A greeting template with dynamic variables",
     "meta": {
-      "author": "test-user",
-      "category": "example"
+      "template_variables": ["name", "platform", "role"],
+      "author": "test-user"
     },
-    "tags": ["example", "test"]
+    "tags": ["template", "greeting"]
   }'
 ```
 
