@@ -80,6 +80,49 @@ def read_prompts(
     return query.offset(skip).limit(limit).all()
 
 
+@router.get("/models", response_model=Dict[str, Any])
+async def get_available_models():
+    """
+    Fetch available models from OpenRouter API.
+    
+    Returns:
+        Dict containing filtered list of available models with only id, name, and pricing information
+    """
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(
+                "https://openrouter.ai/api/v1/models",
+                headers={
+                    "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+                    "HTTP-Referer": settings.PROJECT_URL,
+                    "X-Title": settings.PROJECT_NAME,
+                }
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            # Filter the data array to only include id, name, and pricing
+            if "data" in data:
+                data["data"] = [
+                    {
+                        "id": model["id"],
+                        "name": model["name"],
+                        "pricing": model["pricing"],
+                        "description": model["description"],
+                        "architecture":model["architecture"],
+                        "context_length":model["context_length"],
+                    }
+                    for model in data["data"]
+                ]
+            
+            return data
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to fetch models from OpenRouter: {str(e)}"
+            )
+
+
 @router.get("/{prompt_id}", response_model=Prompt)
 def read_prompt(prompt_id: int, db: Session = Depends(get_db)):
     prompt = db.query(PromptModel).filter(PromptModel.id == prompt_id).first()
