@@ -10,9 +10,11 @@
 
 A modern REST API service for managing and serving AI prompts. This service provides a centralized repository for storing, versioning, and retrieving prompts for various AI applications. It uses PostgreSQL as the database for robust and scalable data management.
 
+> 💡 **GUI Available!** This service comes with a modern web interface. Check out the [Exemplar Prompt Hub UI](https://github.com/shubhanshusingh/Exemplar-Prompt-Hub-UI) for a user-friendly way to manage your prompts, test them in the playground, and compare responses from different AI models.
+
 ---
 
-## 📑 Table of Contents
+## �� Table of Contents
 
 - [Features](#-features)
 - [Getting Started](#️-getting-started)
