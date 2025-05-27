@@ -43,6 +43,9 @@ For a detailed checklist of implemented and planned features, see [FEATURES.md](
 - **Search and filtering capabilities**
 - **Prompt Playground API via OpenRouter**
 
+[![API Specification](docs/assets/api-spec.png)](docs/assets/api-spec.png)
+
+
 ## 🛠️ Getting Started
 
 ### Prerequisites
